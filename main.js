@@ -108,10 +108,6 @@ class LoadAzgaarMap extends FormApplication {
   }
 
   async importData(event) {
-
-    //Snarky Tests:
-    let counter = 0;
-
     ui.notifications.notify("UAFMGI: Creating Journals for Cultures.")
     let cultureFolder = await Folder.create({ name: "Cultures", type: "JournalEntry", parent: null })
     this.cultures.forEach((culture) => {
@@ -169,6 +165,7 @@ class LoadAzgaarMap extends FormApplication {
       }
     })
 
+    let counter = 0;
     ui.notifications.notify("UAFMGI: Creating Journals for Burgs.")
     let burgFolder = await Folder.create({ name: "Burgs", type: "JournalEntry", parent: null })
     this.burgs.forEach((burg) => {
@@ -191,69 +188,70 @@ class LoadAzgaarMap extends FormApplication {
           `
 
         if (burg.name) {
-          JournalEntry.create({
+          let x = JournalEntry.create({
             name: burg.name,
             content: content,
             folder: burgFolder._id,
             permission: { default: 4 }
-          })
+          });
 
 
-          //Snarky Tests
-          // Note.create({
-          //   entryId: JournalEntry.id,
-          //   x: 1000,
-          //   y: 1000,
-          //   icon: "icons/my-journal-icon.svg",
-          //   iconSize: 40,
-          //   iconTint: "#00FF000",
-          //   text: "A custom label",
-          //   fontSize: 48,
-          //   textAnchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
-          //   textColor: "#00FFFF"
-          // }); 
 
-          if (counter < 5) {
-            counter++;
+          //let journalId = game.journal.entries[]
 
-            let journalId = game.journal.entities[counter].data._id;
+          let journalId = JournalEntry.id;//Doesn't work. Need to figure out how to get the id opf the journal entry just created.
+          //getting the latest index doesn't work as the foreach loop has length 13 before the next time around.
 
-            Note.create({
-              entryId: journalId,
-              x: burg.x,
-              y: burg.y,
-              icon: "icons/my-journal-icon.svg",
-              iconSize: 32,
-              iconTint: "#00FF000",
-              text: burg.name,
-              fontSize: 32,
-              textAnchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
-              textColor: "#00FFFF"
-            });
+          Note.create({
+            entryId: journalId,
+            x: burg.x,
+            y: burg.y,
+            icon: "icons/svg/village.svg",
+            iconSize: 32,
+            iconTint: "#00FF000",
+            text: burg.name,
+            fontSize: 32,
+            textAnchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
+            textColor: "#00FFFF"
+          });
 
-            console.log("Snarky Note: ");
-          }
-
+          // console.log("Note Created for journalId: ", journalId);
         }
-
-        // console.log("TheSnarky log Test: ", game);
-
-        // game.scenes.get("w0aF3XE6maUO9iGr").data.notes
-
-
-
-
       }
     })
 
-
-
-
     // console.log("TheSnarky log Test: ", game);
-
     //console.log("TheSnarky event: ", event);
-
     //game.scenes.get("w0aF3XE6maUO9iGr").data.notes[0]
+    // console.log("TheSnarky log Test: ", game);
+    // game.scenes.get("w0aF3XE6maUO9iGr").data.notes
+
+
+    // let journalEntry;
+    // for (journalEntry in game.journal.entries)
+    // {
+    //   // let journalId = journalEntry.id;
+    //   // counter++;
+    //   // console.log("Counter = ", counter);
+
+    //   Note.create({
+    //     entryId: journalEntry.id,
+    //     x: burg.x,
+    //     y: burg.y,
+    //     icon: "icons/svg/village.svg",
+    //     iconSize: 32,
+    //     iconTint: "#00FF000",
+    //     text: burg.name,
+    //     fontSize: 32,
+    //     textAnchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
+    //     textColor: "#00FFFF"
+    //   });
+
+    //   console.log("Note Created for journalId: ", journalId);
+
+
+
+    // }
   }
 
 
