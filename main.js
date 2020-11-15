@@ -1,5 +1,5 @@
 class LoadAzgaarMap extends FormApplication {
-    constructor(...args) {
+  constructor(...args) {
     super(...args);
     game.users.apps.push(this);
     this.burgs = {};
@@ -32,7 +32,7 @@ class LoadAzgaarMap extends FormApplication {
     html.find("button:submit").click((event) => this.importData(event));
   }
 
-  loadMap(event){
+  loadMap(event) {
     return new Promise((resolve, reject) => {
       let input = $(event.currentTarget)[0]
       let fr = new FileReader();
@@ -48,6 +48,8 @@ class LoadAzgaarMap extends FormApplication {
 
   async parseMap(event) {
     let text = await this.loadMap(event);
+
+
     /* Data format as presented in v1.4 of Azgaar's Fantasy Map Generator
     const data = [params, settings, coords, biomes, notesData, svg_xml,
       gridGeneral, grid.cells.h, grid.cells.prec, grid.cells.f, grid.cells.t, grid.cells.temp,
@@ -71,48 +73,51 @@ class LoadAzgaarMap extends FormApplication {
 
     const lines = text.split(/[\r\n]+/g);
     lines.forEach((line) => {
-        try {
-            const obj = JSON.parse(line);
+      try {
+        const obj = JSON.parse(line);
 
-            // Provinces
-            if ("state" in obj[1] && !("cell" in obj[1])) {
-                console.log("Provinces:", obj)
-                this.provinces = obj;
-            }
-            // These are our countries
-            else if ("diplomacy" in obj[0]) {
-                console.log("Countries:", obj)
-                this.countries = obj;
-            // Religions
-            } else if (obj[0].name === "No religion"){
-                console.log("Religions:", obj)
-                this.religions = obj;
-            // Cultures
-            } else if (obj[0].name === "Wildlands") {
-                console.log("Cultures:", obj)
-                this.cultures = obj;
-            // Burgs
-            } else if ("population" in obj[1] && "citadel" in obj[1]) {
-                console.log("Burgs:", obj)
-                this.burgs = obj;
-            // Rivers
-            } else if ("mouth" in obj[0]) {
-                console.log("Rivers:", obj)
-                this.rivers = obj;
-            }
-        } catch (error) {
+        // Provinces
+        if ("state" in obj[1] && !("cell" in obj[1])) {
+          console.log("Provinces:", obj)
+          this.provinces = obj;
         }
-      })
+        // These are our countries
+        else if ("diplomacy" in obj[0]) {
+          console.log("Countries:", obj)
+          this.countries = obj;
+          // Religions
+        } else if (obj[0].name === "No religion") {
+          console.log("Religions:", obj)
+          this.religions = obj;
+          // Cultures
+        } else if (obj[0].name === "Wildlands") {
+          console.log("Cultures:", obj)
+          this.cultures = obj;
+          // Burgs
+        } else if ("population" in obj[1] && "citadel" in obj[1]) {
+          console.log("Burgs:", obj)
+          this.burgs = obj;
+          // Rivers
+        } else if ("mouth" in obj[0]) {
+          console.log("Rivers:", obj)
+          this.rivers = obj;
+        }
+      } catch (error) {
+      }
+    })
   }
 
-  async importData(event){
+  async importData(event) {
+
+    //Snarky Tests:
+    let counter = 0;
 
     ui.notifications.notify("UAFMGI: Creating Journals for Cultures.")
-    let cultureFolder = await Folder.create({name: "Cultures", type: "JournalEntry", parent: null})
+    let cultureFolder = await Folder.create({ name: "Cultures", type: "JournalEntry", parent: null })
     this.cultures.forEach((culture) => {
-      if (!(jQuery.isEmptyObject(culture))){
+      if (!(jQuery.isEmptyObject(culture))) {
 
-          let content = `<div>
+        let content = `<div>
             <h3>${culture.name}</h3>
             <h4>Type: ${culture.type}</h4>
             <h4>Expansionism: ${culture.expansionism}</h4>
@@ -121,23 +126,23 @@ class LoadAzgaarMap extends FormApplication {
           </div>
           `
 
-          if (culture.name){
-             JournalEntry.create({
-              name: culture.name,
-              content: content,
-              folder: cultureFolder._id,
-              permission: {default: 4}
-            })
-         }
+        if (culture.name) {
+          JournalEntry.create({
+            name: culture.name,
+            content: content,
+            folder: cultureFolder._id,
+            permission: { default: 4 }
+          })
+        }
       }
     })
 
     ui.notifications.notify("UAFMGI: Creating Journals for Countries.")
-    let countryFolder = await Folder.create({name: "Countries", type: "JournalEntry", parent: null})
+    let countryFolder = await Folder.create({ name: "Countries", type: "JournalEntry", parent: null })
     this.countries.forEach((country) => {
-      if (!(jQuery.isEmptyObject(country) || (country.name === "Neutrals"))){
+      if (!(jQuery.isEmptyObject(country) || (country.name === "Neutrals"))) {
         // TODO: Extrapolate Provinces, add Burgs?, Neighbors, Diplomacy, Campaigns?, Military?
-          let content = `<div>
+        let content = `<div>
             <h3>${country.fullName}</h3>
             <h4>Type: ${country.type}</h4>
             <h4>Expansionism: ${country.expansionism}</h4>
@@ -153,23 +158,23 @@ class LoadAzgaarMap extends FormApplication {
           </div>
           `
 
-          if (country.name){
-             JournalEntry.create({
-              name: country.name,
-              content: content,
-              folder: countryFolder._id,
-              permission: {default: 4}
-            })
-         }
+        if (country.name) {
+          JournalEntry.create({
+            name: country.name,
+            content: content,
+            folder: countryFolder._id,
+            permission: { default: 4 }
+          })
+        }
       }
     })
 
     ui.notifications.notify("UAFMGI: Creating Journals for Burgs.")
-    let burgFolder = await Folder.create({name: "Burgs", type: "JournalEntry", parent: null})
+    let burgFolder = await Folder.create({ name: "Burgs", type: "JournalEntry", parent: null })
     this.burgs.forEach((burg) => {
-      if (!(jQuery.isEmptyObject(burg))){
+      if (!(jQuery.isEmptyObject(burg))) {
 
-          let content = `<div>
+        let content = `<div>
             <h3>${burg.name}</h3>
             <h4>State: ${this.countries[burg.state].name}</h4>
             <h4>Culture: ${this.cultures[burg.culture].name}</h4>
@@ -185,17 +190,73 @@ class LoadAzgaarMap extends FormApplication {
           </div>
           `
 
-          if (burg.name){
-             JournalEntry.create({
-              name: burg.name,
-              content: content,
-              folder: burgFolder._id,
-              permission: {default: 4}
-            })
-         }
+        if (burg.name) {
+          JournalEntry.create({
+            name: burg.name,
+            content: content,
+            folder: burgFolder._id,
+            permission: { default: 4 }
+          })
+
+
+          //Snarky Tests
+          // Note.create({
+          //   entryId: JournalEntry.id,
+          //   x: 1000,
+          //   y: 1000,
+          //   icon: "icons/my-journal-icon.svg",
+          //   iconSize: 40,
+          //   iconTint: "#00FF000",
+          //   text: "A custom label",
+          //   fontSize: 48,
+          //   textAnchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
+          //   textColor: "#00FFFF"
+          // }); 
+
+          if (counter < 5) {
+            counter++;
+
+            let journalId = game.journal.entities[counter].data._id;
+
+            Note.create({
+              entryId: journalId,
+              x: burg.x,
+              y: burg.y,
+              icon: "icons/my-journal-icon.svg",
+              iconSize: 32,
+              iconTint: "#00FF000",
+              text: burg.name,
+              fontSize: 32,
+              textAnchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
+              textColor: "#00FFFF"
+            });
+
+            console.log("Snarky Note: ");
+          }
+
+        }
+
+        // console.log("TheSnarky log Test: ", game);
+
+        // game.scenes.get("w0aF3XE6maUO9iGr").data.notes
+
+
+
+
       }
     })
+
+
+
+
+    // console.log("TheSnarky log Test: ", game);
+
+    //console.log("TheSnarky event: ", event);
+
+    //game.scenes.get("w0aF3XE6maUO9iGr").data.notes[0]
   }
+
+
 
   async _updateObject(event, formData) {
     return;
