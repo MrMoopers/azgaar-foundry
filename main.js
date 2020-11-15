@@ -168,7 +168,7 @@ class LoadAzgaarMap extends FormApplication {
     let counter = 0;
     ui.notifications.notify("UAFMGI: Creating Journals for Burgs.")
     let burgFolder = await Folder.create({ name: "Burgs", type: "JournalEntry", parent: null })
-    this.burgs.forEach((burg) => {
+    this.burgs.forEach(async (burg) => {
       if (!(jQuery.isEmptyObject(burg))) {
 
         let content = `<div>
@@ -188,22 +188,21 @@ class LoadAzgaarMap extends FormApplication {
           `
 
         if (burg.name) {
-          let x = JournalEntry.create({
+          let journalEntryData = await JournalEntry.create({
             name: burg.name,
             content: content,
             folder: burgFolder._id,
             permission: { default: 4 }
           });
 
-
-
+          console.log("x = ", journalEntryData);
           //let journalId = game.journal.entries[]
 
-          let journalId = JournalEntry.id;//Doesn't work. Need to figure out how to get the id opf the journal entry just created.
-          //getting the latest index doesn't work as the foreach loop has length 13 before the next time around.
+          // let journalId = JournalEntry.id;//Doesn't work. Need to figure out how to get the id opf the journal entry just created.
+          // //getting the latest index doesn't work as the foreach loop has length 13 before the next time around.
 
           Note.create({
-            entryId: journalId,
+            entryId: journalEntryData.data._id,
             x: burg.x,
             y: burg.y,
             icon: "icons/svg/village.svg",
