@@ -195,14 +195,14 @@ class LoadAzgaarMap extends FormApplication {
             permission: { default: 4 }
           });
 
-          console.log("x = ", journalEntryData);
+          console.log("journalEntryData = ", journalEntryData);
           //let journalId = game.journal.entries[]
 
           // let journalId = JournalEntry.id;//Doesn't work. Need to figure out how to get the id opf the journal entry just created.
           // //getting the latest index doesn't work as the foreach loop has length 13 before the next time around.
 
           Note.create({
-            entryId: journalEntryData.data._id,
+            entryId: journalEntryData._id,
             x: burg.x,
             y: burg.y,
             icon: "icons/svg/village.svg",
