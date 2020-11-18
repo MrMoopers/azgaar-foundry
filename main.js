@@ -195,62 +195,22 @@ class LoadAzgaarMap extends FormApplication {
             permission: { default: 4 }
           });
 
-          console.log("x = ", journalEntryData);
-          //let journalId = game.journal.entries[]
-
-          // let journalId = JournalEntry.id;//Doesn't work. Need to figure out how to get the id opf the journal entry just created.
-          // //getting the latest index doesn't work as the foreach loop has length 13 before the next time around.
-
+          //Create a MapNote for this Burg, linking them.
           Note.create({
-            entryId: journalEntryData.data._id,
+            entryId: journalEntryData._id,
             x: burg.x,
             y: burg.y,
             icon: "icons/svg/village.svg",
             iconSize: 32,
             iconTint: "#00FF000",
             text: burg.name,
-            fontSize: 32,
+            fontSize: 24,
             textAnchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
             textColor: "#00FFFF"
           });
-
-          // console.log("Note Created for journalId: ", journalId);
         }
       }
     })
-
-    // console.log("TheSnarky log Test: ", game);
-    //console.log("TheSnarky event: ", event);
-    //game.scenes.get("w0aF3XE6maUO9iGr").data.notes[0]
-    // console.log("TheSnarky log Test: ", game);
-    // game.scenes.get("w0aF3XE6maUO9iGr").data.notes
-
-
-    // let journalEntry;
-    // for (journalEntry in game.journal.entries)
-    // {
-    //   // let journalId = journalEntry.id;
-    //   // counter++;
-    //   // console.log("Counter = ", counter);
-
-    //   Note.create({
-    //     entryId: journalEntry.id,
-    //     x: burg.x,
-    //     y: burg.y,
-    //     icon: "icons/svg/village.svg",
-    //     iconSize: 32,
-    //     iconTint: "#00FF000",
-    //     text: burg.name,
-    //     fontSize: 32,
-    //     textAnchor: CONST.TEXT_ANCHOR_POINTS.CENTER,
-    //     textColor: "#00FFFF"
-    //   });
-
-    //   console.log("Note Created for journalId: ", journalId);
-
-
-
-    // }
   }
 
 
