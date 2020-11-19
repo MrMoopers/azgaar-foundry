@@ -50,6 +50,8 @@ class LoadAzgaarMap extends FormApplication {
     let text = await this.loadMap(event);
 
 
+    console.log('text = ', text);
+
     /* Data format as presented in v1.4 of Azgaar's Fantasy Map Generator
     const data = [params, settings, coords, biomes, notesData, svg_xml,
       gridGeneral, grid.cells.h, grid.cells.prec, grid.cells.f, grid.cells.t, grid.cells.temp,
@@ -108,6 +110,18 @@ class LoadAzgaarMap extends FormApplication {
   }
 
   async importData(event) {
+
+    //Create test scene
+    let sceneData = await Scene.create(
+      {
+        name: "Azgaar Map",
+        width: 6400,
+        height: 3028,
+        padding: 0.0,
+      });
+
+      console.log('sceneData = ', sceneData);
+
     ui.notifications.notify("UAFMGI: Creating Journals for Cultures.")
     let cultureFolder = await Folder.create({ name: "Cultures", type: "JournalEntry", parent: null })
     this.cultures.forEach((culture) => {
@@ -165,7 +179,9 @@ class LoadAzgaarMap extends FormApplication {
       }
     })
 
-    let counter = 0;
+    //Activate the scene to add the notes to the correct map
+    sceneData.activate()
+
     ui.notifications.notify("UAFMGI: Creating Journals for Burgs.")
     let burgFolder = await Folder.create({ name: "Burgs", type: "JournalEntry", parent: null })
     this.burgs.forEach(async (burg) => {
@@ -196,6 +212,11 @@ class LoadAzgaarMap extends FormApplication {
           });
 
           //Create a MapNote for this Burg, linking them.
+
+          //TODO: Make a new scene generate when the file is uploaded and paste this data onto that
+          //TODO: Colour Mapnotes according to the province colour? Country colour?
+
+
           Note.create({
             entryId: journalEntryData._id,
             x: burg.x,
