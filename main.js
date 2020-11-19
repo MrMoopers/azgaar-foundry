@@ -49,9 +49,6 @@ class LoadAzgaarMap extends FormApplication {
   async parseMap(event) {
     let text = await this.loadMap(event);
 
-
-    console.log('text = ', text);
-
     /* Data format as presented in v1.4 of Azgaar's Fantasy Map Generator
     const data = [params, settings, coords, biomes, notesData, svg_xml,
       gridGeneral, grid.cells.h, grid.cells.prec, grid.cells.f, grid.cells.t, grid.cells.temp,
@@ -111,7 +108,7 @@ class LoadAzgaarMap extends FormApplication {
 
   async importData(event) {
 
-    //Create test scene
+    //Create The Map Scene
     let sceneData = await Scene.create(
       {
         name: "Azgaar Map",
@@ -120,7 +117,7 @@ class LoadAzgaarMap extends FormApplication {
         padding: 0.0,
       });
 
-      console.log('sceneData = ', sceneData);
+    console.log('sceneData = ', sceneData);
 
     ui.notifications.notify("UAFMGI: Creating Journals for Cultures.")
     let cultureFolder = await Folder.create({ name: "Cultures", type: "JournalEntry", parent: null })
@@ -211,12 +208,7 @@ class LoadAzgaarMap extends FormApplication {
             permission: { default: 4 }
           });
 
-          //Create a MapNote for this Burg, linking them.
-
-          //TODO: Make a new scene generate when the file is uploaded and paste this data onto that
-          //TODO: Colour Mapnotes according to the province colour? Country colour?
-
-
+          //Create a MapNote for this journalEntry, adding it to the active, new, scene.
           Note.create({
             entryId: journalEntryData._id,
             x: burg.x,
