@@ -72,7 +72,7 @@ class LoadAzgaarMap extends FormApplication {
     const lines = text.split(/[\r\n]+/g);
 
     let firstLine = lines[0].split('|');
-    this.mapWidth = firstLine[4];
+    this.mapWidth = firstLine[4]; 
     this.mapHeight = firstLine[5];
 
     lines.forEach((line) => {
