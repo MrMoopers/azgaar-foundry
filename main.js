@@ -97,10 +97,21 @@ class LoadAzgaarMap extends FormApplication {
     const lines = text.split(/[\r\n]+/g);
 
     // FMG Settings
+    console.log("lines = ", lines);
     let firstLine = lines[0].split("|");
+    console.log("firstLine = ", firstLine);
+
+    this.desiredMapWidth = 1000;
     // Extract image size
-    this.mapWidth = firstLine[4];
-    this.mapHeight = firstLine[5];
+    let mapWidth = firstLine[4];
+    let mapHeight = firstLine[5];
+    this.widthScale = mapWidth / this.desiredMapWidth;
+    this.heightScale = mapHeight / this.desiredMapWidth;
+    this.scaleRatio = mapWidth / mapHeight;
+
+    console.log("widthScale = ", this.widthScale);
+    console.log("heightScale = ", this.heightScale);
+    console.log("scaleRatio = ", this.scaleRatio);
 
     lines.forEach((line) => {
       try {
@@ -140,7 +151,7 @@ class LoadAzgaarMap extends FormApplication {
           this.rivers = obj;
         }
         // Many things in the file are not JSON, we don't care about them.
-      } catch (error) {}
+      } catch (error) { }
     });
   }
 
@@ -156,7 +167,7 @@ class LoadAzgaarMap extends FormApplication {
        * Cultures
        */
       ui.notifications.notify("UAFMGI: Creating Journals for Cultures.");
-      let cultureFolder = await Folder.create({name: "Cultures", type: "JournalEntry", parent: null})
+      let cultureFolder = await Folder.create({ name: "Cultures", type: "JournalEntry", parent: null })
       let cultureData = this.cultures.map((culture) => {
         if (!jQuery.isEmptyObject(culture)) {
           let content = `<div>
@@ -187,7 +198,7 @@ class LoadAzgaarMap extends FormApplication {
         return {
           id: culture.i,
           name: culture.name,
-          journal: this.retrieveJournalByName({type: "culture", name: culture.name})
+          journal: this.retrieveJournalByName({ type: "culture", name: culture.name })
         }
       })
 
@@ -196,7 +207,7 @@ class LoadAzgaarMap extends FormApplication {
        */
       ui.notifications.notify("UAFMGI: Creating Journals for Countries.");
 
-      let countryFolder = await Folder.create({name: "Countries", type:"JournalEntry", parent: "null"});
+      let countryFolder = await Folder.create({ name: "Countries", type: "JournalEntry", parent: "null" });
       let countryData = this.countries.map((country) => {
         if (!(jQuery.isEmptyObject(country) || country.name === "Neutrals")) {
           // TODO: Extrapolate Provinces, add Burgs?, Neighbors, Diplomacy, Campaigns?, Military?
@@ -241,7 +252,7 @@ class LoadAzgaarMap extends FormApplication {
         return {
           id: country.i,
           name: country.name,
-          journal: this.retrieveJournalByName({type: "country", name: country.name})
+          journal: this.retrieveJournalByName({ type: "country", name: country.name })
         }
       })
 
@@ -249,13 +260,13 @@ class LoadAzgaarMap extends FormApplication {
        * Burgs
        */
       ui.notifications.notify("UAFMGI: Creating Journals for Burgs.");
-      let burgFolder = await Folder.create({name: "Burgs", type: "JournalEntry", parent: null})
+      let burgFolder = await Folder.create({ name: "Burgs", type: "JournalEntry", parent: null })
       let burgData = this.burgs.map((burg) => {
         if (!jQuery.isEmptyObject(burg)) {
 
           let culture = cultureLookup[burg.culture];
           let country = countryLookup[burg.state];
-          
+
           let content = `<div>
               <h3>${burg.name}</h3>
               <h4>State: @JournalEntry[${country.journal.id}]{${country.name}}</h4>
@@ -291,7 +302,7 @@ class LoadAzgaarMap extends FormApplication {
        * Provinces
        */
       ui.notifications.notify("UAFMGI: Creating Journals for Provinces.");
-      let provinceFolder = await Folder.create({name: "Provinces", type:"JournalEntry", parent: null});
+      let provinceFolder = await Folder.create({ name: "Provinces", type: "JournalEntry", parent: null });
       let provinceData = this.provinces.map((province) => {
         if (province !== 0) {
           let content = `<div>
@@ -335,8 +346,8 @@ class LoadAzgaarMap extends FormApplication {
       //Create The Map Scene
       let sceneData = await Scene.create({
         name: sceneName,
-        width: this.mapWidth,
-        height: this.mapHeight,
+        width: parseInt(this.desiredMapWidth),
+        height: parseInt(this.desiredMapWidth / this.scaleRatio),
         padding: 0.0,
         img: svg,
         // Flags for making pinfix work immediately.
@@ -429,8 +440,8 @@ class LoadAzgaarMap extends FormApplication {
       // Assemble data required for notes
       return {
         entryId: journalEntry._id,
-        x: country.pole[0],
-        y: country.pole[1],
+        x: country.pole[0] / this.widthScale,
+        y: country.pole[1] / this.heightScale,
         icon: "icons/svg/castle.svg",
         iconSize: 32,
         iconTint: country.color,
@@ -457,8 +468,8 @@ class LoadAzgaarMap extends FormApplication {
       // Assemble data required for notes
       return {
         entryId: journalEntry._id,
-        x: centerBurg.x,
-        y: centerBurg.y,
+        x: centerBurg.x / this.widthScale,
+        y: centerBurg.y / this.heightScale,
         icon: "icons/svg/tower.svg",
         iconSize: 32,
         iconTint: province.color,
@@ -478,8 +489,8 @@ class LoadAzgaarMap extends FormApplication {
       // Assemble data required for notes
       return {
         entryId: journalEntry._id,
-        x: burg.x,
-        y: burg.y,
+        x: burg.x / this.widthScale,
+        y: burg.y / this.heightScale,
         icon: "icons/svg/village.svg",
         iconSize: 32,
         iconTint: "#00FF000",
