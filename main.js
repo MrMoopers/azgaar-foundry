@@ -101,17 +101,20 @@ class LoadAzgaarMap extends FormApplication {
     let firstLine = lines[0].split("|");
     console.log("firstLine = ", firstLine);
 
-    this.desiredMapWidth = 1000;
-    // Extract image size
-    let mapWidth = firstLine[4];
-    let mapHeight = firstLine[5];
-    this.widthScale = mapWidth / this.desiredMapWidth;
-    this.heightScale = mapHeight / this.desiredMapWidth;
-    this.scaleRatio = mapWidth / mapHeight;
 
-    console.log("widthScale = ", this.widthScale);
-    console.log("heightScale = ", this.heightScale);
-    console.log("scaleRatio = ", this.scaleRatio);
+    this.userScale = this.element.find('[name="userScale"]').val();;
+    console.log("this.userScale = ", this.userScale);
+    //this.desiredMapWidth = 1000;
+    // Extract image size
+    this.mapWidth = firstLine[4];
+    this.mapHeight = firstLine[5];
+    // this.widthScale = mapWidth / this.desiredMapWidth;
+    // this.heightScale = mapHeight / this.desiredMapWidth;
+    // this.scaleRatio = mapWidth / mapHeight;
+
+    // console.log("widthScale = ", this.widthScale);
+    // console.log("heightScale = ", this.heightScale);
+    // console.log("scaleRatio = ", this.scaleRatio);
 
     lines.forEach((line) => {
       try {
@@ -346,8 +349,8 @@ class LoadAzgaarMap extends FormApplication {
       //Create The Map Scene
       let sceneData = await Scene.create({
         name: sceneName,
-        width: parseInt(this.desiredMapWidth),
-        height: parseInt(this.desiredMapWidth / this.scaleRatio),
+        width: parseInt(this.mapWidth * this.userScale),
+        height: parseInt(this.mapHeight * this.userScale),
         padding: 0.0,
         img: svg,
         // Flags for making pinfix work immediately.
@@ -440,8 +443,8 @@ class LoadAzgaarMap extends FormApplication {
       // Assemble data required for notes
       return {
         entryId: journalEntry._id,
-        x: country.pole[0] / this.widthScale,
-        y: country.pole[1] / this.heightScale,
+        x: country.pole[0] * this.userScale,
+        y: country.pole[1] * this.userScale,
         icon: "icons/svg/castle.svg",
         iconSize: 32,
         iconTint: country.color,
@@ -468,8 +471,8 @@ class LoadAzgaarMap extends FormApplication {
       // Assemble data required for notes
       return {
         entryId: journalEntry._id,
-        x: centerBurg.x / this.widthScale,
-        y: centerBurg.y / this.heightScale,
+        x: centerBurg.x * this.userScale,
+        y: centerBurg.y * this.userScale,
         icon: "icons/svg/tower.svg",
         iconSize: 32,
         iconTint: province.color,
@@ -489,8 +492,8 @@ class LoadAzgaarMap extends FormApplication {
       // Assemble data required for notes
       return {
         entryId: journalEntry._id,
-        x: burg.x / this.widthScale,
-        y: burg.y / this.heightScale,
+        x: burg.x * this.userScale,
+        y: burg.y * this.userScale,
         icon: "icons/svg/village.svg",
         iconSize: 32,
         iconTint: "#00FF000",
@@ -516,6 +519,17 @@ class LoadAzgaarMap extends FormApplication {
     ]);
     return;
   }
+
+
+  // get userScale() {
+  //   console.log("mapScale = ", this.mapScale);
+  //   return this.mapScale;
+  // }
+
+  // set userScale(scale) {
+  //   console.log("userScale = ", userScale);
+  //   this.mapScale = scale;
+  // }
 }
 
 Hooks.once("init", () => {
@@ -527,4 +541,19 @@ Hooks.once("init", () => {
     type: LoadAzgaarMap,
     restricted: true,
   });
+
+  // Maximum Framerate
+  // game.settings.register("core", "userScale", {
+  //   name: "SETTINGS.userScale",
+  //   hint: "SETTINGS.userScale",
+  //   scope: "client",
+  //   config: true,
+  //   type: Number,
+  //   range: {min: 0.1, max: 2.0, step: 0.1},
+  //   default: 1.0,
+  //   //onChange: () => canvas ? canvas.draw() : null
+  // });
 });
+
+
+
