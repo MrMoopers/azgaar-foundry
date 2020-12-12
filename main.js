@@ -97,24 +97,13 @@ class LoadAzgaarMap extends FormApplication {
     const lines = text.split(/[\r\n]+/g);
 
     // FMG Settings
-    console.log("lines = ", lines);
-    let firstLine = lines[0].split("|");
-    console.log("firstLine = ", firstLine);
+    // Get user selected scale
+    this.userScale = this.element.find('[name="userScale"]').val();
 
-
-    this.userScale = this.element.find('[name="userScale"]').val();;
-    console.log("this.userScale = ", this.userScale);
-    //this.desiredMapWidth = 1000;
     // Extract image size
+    let firstLine = lines[0].split("|");
     this.mapWidth = firstLine[4];
     this.mapHeight = firstLine[5];
-    // this.widthScale = mapWidth / this.desiredMapWidth;
-    // this.heightScale = mapHeight / this.desiredMapWidth;
-    // this.scaleRatio = mapWidth / mapHeight;
-
-    // console.log("widthScale = ", this.widthScale);
-    // console.log("heightScale = ", this.heightScale);
-    // console.log("scaleRatio = ", this.scaleRatio);
 
     lines.forEach((line) => {
       try {
@@ -519,17 +508,6 @@ class LoadAzgaarMap extends FormApplication {
     ]);
     return;
   }
-
-
-  // get userScale() {
-  //   console.log("mapScale = ", this.mapScale);
-  //   return this.mapScale;
-  // }
-
-  // set userScale(scale) {
-  //   console.log("userScale = ", userScale);
-  //   this.mapScale = scale;
-  // }
 }
 
 Hooks.once("init", () => {
@@ -541,18 +519,6 @@ Hooks.once("init", () => {
     type: LoadAzgaarMap,
     restricted: true,
   });
-
-  // Maximum Framerate
-  // game.settings.register("core", "userScale", {
-  //   name: "SETTINGS.userScale",
-  //   hint: "SETTINGS.userScale",
-  //   scope: "client",
-  //   config: true,
-  //   type: Number,
-  //   range: {min: 0.1, max: 2.0, step: 0.1},
-  //   default: 1.0,
-  //   //onChange: () => canvas ? canvas.draw() : null
-  // });
 });
 
 
